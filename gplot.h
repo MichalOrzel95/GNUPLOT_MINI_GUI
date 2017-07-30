@@ -18,6 +18,7 @@ struct
 {
     const gchar *file;
     const gchar *plot;
+    const gchar *reso;
     const gchar *folder;
     const gchar *ttype;
     const gchar *ptitle;
@@ -35,6 +36,7 @@ GtkDialog                  *dialog;
 GtkDialog                  *dialog1;
 GtkAboutDialog             *about_dialog;
 GtkAboutDialog             *help_dialog;
+GtkComboBoxText            *plot_resolution;
 GtkButton                  *button;
 GtkButton                  *author;
 GtkButton                  *help;

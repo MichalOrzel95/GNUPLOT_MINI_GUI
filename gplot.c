@@ -19,6 +19,7 @@ void LoadGUIComponents(void)
     dialog1=GTK_DIALOG(gtk_builder_get_object(builder,"dialog1"));
     about_dialog=GTK_ABOUT_DIALOG(gtk_builder_get_object(builder,"AboutDialog"));
     help_dialog=GTK_ABOUT_DIALOG(gtk_builder_get_object(builder,"HelpDialog"));
+    plot_resolution=GTK_COMBO_BOX_TEXT(gtk_builder_get_object(builder,"choose_resolution"));
     button=GTK_BUTTON(gtk_builder_get_object(builder,"generate_plot"));
     author=GTK_BUTTON(gtk_builder_get_object(builder,"author"));
     help=GTK_BUTTON(gtk_builder_get_object(builder,"help"));
@@ -42,6 +43,7 @@ void on_generate_plot_clicked(void)
     //Taking data from GUI
     text.file=gtk_file_chooser_get_filename(data_file_chooser);
     text.plot=gtk_entry_get_text(plot_name);
+    text.reso=gtk_combo_box_text_get_active_text(plot_resolution);
     text.folder=gtk_file_chooser_get_current_folder(plot_folder);
     text.ptitle=gtk_entry_get_text(title);
     text.pxlab=gtk_entry_get_text(xlabel);
@@ -49,7 +51,7 @@ void on_generate_plot_clicked(void)
 
     //Sending data to GNUPLOT
     //Selecting terminal
-    fprintf(plot,"set term png size 640,480\n");
+    fprintf(plot,"set term png size %s\n",text.reso);
     //Selecting name for plot
     fprintf(plot,"set output \"%s/%s.png\"\n",text.folder,text.plot);
     //Selecting title
