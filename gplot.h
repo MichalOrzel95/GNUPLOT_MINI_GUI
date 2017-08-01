@@ -28,6 +28,7 @@ struct
 
 //Global variables
 FILE *plot; //File handler
+guint contex_id;
 
 //GLADE components
 GtkWindow                  *window;
@@ -47,7 +48,9 @@ GtkEntry                   *plot_name;
 GtkEntry                   *title;
 GtkEntry                   *xlabel;
 GtkEntry                   *ylabel;
+GtkStatusbar               *statusbar;
 GtkBuilder                 *builder;
+GList                      *list;
 
 //Functions prototypes
 void LoadGUIComponents(void);
@@ -59,5 +62,8 @@ void on_close_about_button_press_event(void);
 void on_help_clicked(void);
 void on_close_help_button_press_event(void);
 int check_if_plot_was_generated(char *filename);
+void on_data_file_chooser_file_set(void);
+void on_plot_name_text_insert_text(void);
+void on_folder_plot_file_set(void);
 
 #endif //GTK_TEST_GPLOT_H

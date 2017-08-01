@@ -30,6 +30,23 @@ void LoadGUIComponents(void)
     title=GTK_ENTRY(gtk_builder_get_object(builder,"plot_title_text"));
     xlabel=GTK_ENTRY(gtk_builder_get_object(builder,"plot_xlabel_text"));
     ylabel=GTK_ENTRY(gtk_builder_get_object(builder,"plot_ylabel_text"));
+    statusbar=GTK_STATUSBAR(gtk_builder_get_object(builder,"status_bar"));
+
+    contex_id=gtk_statusbar_get_context_id(statusbar,"3");
+    gtk_statusbar_push(statusbar,contex_id,"Status to success:\tThree fields left");
+
+    //Modyfying GUI components
+    list=gtk_container_get_children(GTK_CONTAINER(button));
+    gtk_label_set_markup(GTK_LABEL(list->data),"<b>PRESS TO GENERATE PLOT</b>");
+
+    list=gtk_container_get_children(GTK_CONTAINER(help));
+    gtk_label_set_markup(GTK_LABEL(list->data),"<b>HELP</b>");
+
+    list=gtk_container_get_children(GTK_CONTAINER(author));
+    gtk_label_set_markup(GTK_LABEL(list->data),"<b>ABOUT</b>");
+
+    gtk_window_set_title((GtkWindow *)help_dialog,"HELP");
+    gtk_window_set_title((GtkWindow *)about_dialog,"ABOUT");
 }
 
 //Pressing major button
@@ -49,25 +66,6 @@ void on_generate_plot_clicked(void)
     text.pxlab=gtk_entry_get_text(xlabel);
     text.pylab=gtk_entry_get_text(ylabel);
 
-    //Sending data to GNUPLOT
-    //Selecting terminal
-    fprintf(plot,"set term png size %s\n",text.reso);
-    //Selecting name for plot
-    fprintf(plot,"set output \"%s/%s.png\"\n",text.folder,text.plot);
-    //Selecting title
-    fprintf(plot,"set title \"%s\"\n",text.ptitle);
-    //Selecting x label
-    fprintf(plot,"set xlabel \"%s\"\n",text.pxlab);
-    //Selecting y label
-    fprintf(plot,"set ylabel \"%s\"\n",text.pylab);
-    //Selecting equal axes-length
-    fprintf(plot,"set size ratio -1\n");
-    //Generating plot
-    fprintf(plot,"plot \"%s\" with lines\n",text.file);
-
-    //Closing gnuplot
-    pclose(plot);
-
     //Checking if all the necessary fields are filled
     size_t plot_length=strlen(text.plot);
     void *ptr=gtk_file_chooser_get_uri(data_file_chooser);
@@ -78,6 +76,25 @@ void on_generate_plot_clicked(void)
         gtk_dialog_run(dialog1);
     } else
     {
+        //Sending data to GNUPLOT
+        //Selecting terminal
+        fprintf(plot,"set term png size %s\n",text.reso);
+        //Selecting name for plot
+        fprintf(plot,"set output \"%s/%s.png\"\n",text.folder,text.plot);
+        //Selecting title
+        fprintf(plot,"set title \"%s\"\n",text.ptitle);
+        //Selecting x label
+        fprintf(plot,"set xlabel \"%s\"\n",text.pxlab);
+        //Selecting y label
+        fprintf(plot,"set ylabel \"%s\"\n",text.pylab);
+        //Selecting equal axes-length
+        fprintf(plot,"set size ratio -1\n");
+        //Generating plot
+        fprintf(plot,"plot \"%s\" with lines\n",text.file);
+
+        //Closing gnuplot
+        pclose(plot);
+
         char path_array[PATH_SIZE];
         strcpy(path_array,text.folder);
         strcat(path_array,"/");
@@ -133,4 +150,79 @@ int check_if_plot_was_generated(char *filename)
 {
     struct stat buffer;
     return (stat (filename, &buffer) == 0);
+}
+
+//Refreshing status bar
+void on_data_file_chooser_file_set(void)
+{
+    if((gtk_entry_get_text_length(plot_name))==0 && (gtk_file_chooser_get_uri(plot_folder))==NULL)
+    {
+        contex_id=gtk_statusbar_get_context_id(statusbar,"2");
+        gtk_statusbar_push(statusbar,contex_id,"Status to success:\tTwo fields left");
+    }
+    else if((gtk_entry_get_text_length(plot_name))!=0 && (gtk_file_chooser_get_uri(plot_folder))==NULL)
+    {
+        contex_id=gtk_statusbar_get_context_id(statusbar,"1");
+        gtk_statusbar_push(statusbar,contex_id,"Status to success:\tOne field left");
+    }
+    else if((gtk_entry_get_text_length(plot_name))==0 && (gtk_file_chooser_get_uri(plot_folder))!=NULL)
+    {
+        contex_id=gtk_statusbar_get_context_id(statusbar,"1");
+        gtk_statusbar_push(statusbar,contex_id,"Status to success:\tOne field left");
+    }
+    else if((gtk_entry_get_text_length(plot_name))!=0 && (gtk_file_chooser_get_uri(plot_folder))!=NULL)
+    {
+        contex_id=gtk_statusbar_get_context_id(statusbar,"0");
+        gtk_statusbar_push(statusbar,contex_id,"Status to success:\tAll the necessary fields are filled");
+    }
+}
+
+//Refreshing status bar
+void on_plot_name_text_insert_text(void)
+{
+    if((gtk_file_chooser_get_uri(data_file_chooser))==NULL && (gtk_file_chooser_get_uri(plot_folder))==NULL)
+    {
+        contex_id=gtk_statusbar_get_context_id(statusbar,"2");
+        gtk_statusbar_push(statusbar,contex_id,"Status to success:\tTwo fields left");
+    }
+    else if((gtk_file_chooser_get_uri(data_file_chooser))!=NULL && (gtk_file_chooser_get_uri(plot_folder))==NULL)
+    {
+        contex_id=gtk_statusbar_get_context_id(statusbar,"1");
+        gtk_statusbar_push(statusbar,contex_id,"Status to success:\tOne field left");
+    }
+    else if((gtk_file_chooser_get_uri(data_file_chooser))==NULL && (gtk_file_chooser_get_uri(plot_folder))!=NULL)
+    {
+        contex_id=gtk_statusbar_get_context_id(statusbar,"1");
+        gtk_statusbar_push(statusbar,contex_id,"Status to success:\tOne field left");
+    }
+    else if((gtk_file_chooser_get_uri(data_file_chooser))!=NULL && (gtk_file_chooser_get_uri(plot_folder))!=NULL)
+    {
+        contex_id=gtk_statusbar_get_context_id(statusbar,"0");
+        gtk_statusbar_push(statusbar,contex_id,"Status to success:\tAll the necessary fields are filled");
+    }
+}
+
+//Refreshing status bar
+void on_folder_plot_file_set(void)
+{
+    if((gtk_file_chooser_get_uri(data_file_chooser))==NULL && (gtk_entry_get_text_length(plot_name))==0)
+    {
+        contex_id=gtk_statusbar_get_context_id(statusbar,"2");
+        gtk_statusbar_push(statusbar,contex_id,"Status to success:\tTwo fields left");
+    }
+    else if((gtk_file_chooser_get_uri(data_file_chooser))!=NULL && (gtk_entry_get_text_length(plot_name))==0)
+    {
+        contex_id=gtk_statusbar_get_context_id(statusbar,"1");
+        gtk_statusbar_push(statusbar,contex_id,"Status to success:\tOne field left");
+    }
+    else if((gtk_file_chooser_get_uri(data_file_chooser))==NULL && (gtk_entry_get_text_length(plot_name))!=0)
+    {
+        contex_id=gtk_statusbar_get_context_id(statusbar,"1");
+        gtk_statusbar_push(statusbar,contex_id,"Status to success:\tOne field left");
+    }
+    else if((gtk_file_chooser_get_uri(data_file_chooser))!=NULL && (gtk_entry_get_text_length(plot_name))!=0)
+    {
+        contex_id=gtk_statusbar_get_context_id(statusbar,"0");
+        gtk_statusbar_push(statusbar,contex_id,"Status to success:\tAll the necessary fields are filled");
+    }
 }
