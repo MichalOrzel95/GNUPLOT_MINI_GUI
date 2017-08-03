@@ -22,6 +22,7 @@ struct
     const gchar *folder;
     const gchar *ttype;
     const gchar *ptitle;
+    const gchar *style;
     const gchar *pxlab;
     const gchar *pylab;
 }text;
@@ -51,6 +52,7 @@ GtkEntry                   *ylabel;
 GtkStatusbar               *statusbar;
 GtkBuilder                 *builder;
 GList                      *list;
+GtkComboBoxText            *line_style;
 
 //Functions prototypes
 void LoadGUIComponents(void);

@@ -31,6 +31,7 @@ void LoadGUIComponents(void)
     xlabel=GTK_ENTRY(gtk_builder_get_object(builder,"plot_xlabel_text"));
     ylabel=GTK_ENTRY(gtk_builder_get_object(builder,"plot_ylabel_text"));
     statusbar=GTK_STATUSBAR(gtk_builder_get_object(builder,"status_bar"));
+    line_style=GTK_COMBO_BOX_TEXT(gtk_builder_get_object(builder,"choose_line_style"));
 
     contex_id=gtk_statusbar_get_context_id(statusbar,"3");
     gtk_statusbar_push(statusbar,contex_id,"Status to success:\tThree fields left");
@@ -65,6 +66,7 @@ void on_generate_plot_clicked(void)
     text.ptitle=gtk_entry_get_text(title);
     text.pxlab=gtk_entry_get_text(xlabel);
     text.pylab=gtk_entry_get_text(ylabel);
+    text.style=gtk_combo_box_text_get_active_text(line_style);
 
     //Checking if all the necessary fields are filled
     size_t plot_length=strlen(text.plot);
@@ -90,7 +92,16 @@ void on_generate_plot_clicked(void)
         //Selecting equal axes-length
         fprintf(plot,"set size ratio -1\n");
         //Generating plot
-        fprintf(plot,"plot \"%s\" with lines\n",text.file);
+        if((strstr(text.style,"boxes filled"))!=NULL)
+        {
+            fprintf(plot,"set boxwidth 0.9 relative\n");
+            fprintf(plot,"set style fill solid 1.0\n");
+            fprintf(plot,"plot \"%s\" with boxes\n",text.file);
+        }
+        else
+        {
+            fprintf(plot,"plot \"%s\" with %s\n",text.file,text.style);
+        }
 
         //Closing gnuplot
         pclose(plot);
