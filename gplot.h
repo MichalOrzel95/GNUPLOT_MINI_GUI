@@ -8,7 +8,7 @@
 #include <glib/gtypes.h>
 
 //Path to .glade file
-#define PATH_TO_GLADE_FILE "/home/orzelm/PROGRAMMING/GTK_TEST/cmake-build-release/test_glade.glade"
+#define PATH_TO_GLADE_FILE "/home/orzelm/PROGRAMMING/GUI/plotgui-1.0/test_glade.glade"
 //Max number of signs in names
 #define ARRAY_SIZE  20
 //Max number of signs in path
